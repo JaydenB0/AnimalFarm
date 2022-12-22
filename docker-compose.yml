@@ -1,0 +1,10 @@
+version: '3.8'
+networks:
+  default:
+    name: farm-network
+    external: false
+
+services:
+  server:
+    image: python:3.9.16-slim
+  client:
