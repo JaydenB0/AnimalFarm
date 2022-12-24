@@ -7,4 +7,17 @@ networks:
 services:
   server:
     image: python:3.9.16-slim
+    build:
+      context: server/
+      args:
+        FARM_VERSION: ${FARM_VERSION}
+    restart: unless-stopped
   client:
+    image: python:3.9.16-slim
+    build:
+      context: client/
+      args:
+        FARM_VERSION: ${FARM_VERSION}
+    restart: unless-stopped
+    volumes:
+      - ./client/exploits:/app/exploits
