@@ -66,9 +66,14 @@ class EventHandler(FileSystemEventHandler):
         elif event.event_type in ('created', 'modified'):
             # Add the new exploit to the exploit store
             logger.debug("Found new file!")
-            if (event.event_type is not 'modified'):
+            if (event.event_type != 'modified'):
                 exploit = Exploit(os.path.basename(event.src_path), event.src_path)
                 self.store.add_exploit(exploit)
 
             # Launch the exploit immediately
             self.attacker.launch_exploits()
+            
+        elif event.event_type in ('deleted', 'moved'):
+            logger.debug(event.src_path)
+            self.store.remove_exploit(self.store.find(event.src_path))
+
