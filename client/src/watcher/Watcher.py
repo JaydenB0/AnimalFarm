@@ -25,7 +25,7 @@ class Watcher:
         Args:
             directory (str): The directory to monitor for new files.
             exploit_store (ExploitStore): The `ExploitStore` to update with new exploits.
-            manager (CTFManager): The `CTFManager` to launch the new exploit immediately.
+            attakker (Attacker): The `attacker` to launch the new exploit immediately.
         """
         self.directory = directory
         self.exploit_store = exploit_store
@@ -65,15 +65,15 @@ class EventHandler(FileSystemEventHandler):
             return
         elif event.event_type in ('created', 'modified'):
             # Add the new exploit to the exploit store
-            logger.debug("Found new file!")
+            logger.debug("Loading exploit: " + os.path.basename(event.src_path))
             if (event.event_type != 'modified'):
                 exploit = Exploit(os.path.basename(event.src_path), event.src_path)
                 self.store.add_exploit(exploit)
 
             # Launch the exploit immediately
             self.attacker.launch_exploits()
-            
+
         elif event.event_type in ('deleted', 'moved'):
-            logger.debug(event.src_path)
+            logger.debug("Removing exploit: " + event.src_path)
             self.store.remove_exploit(self.store.find(event.src_path))
 

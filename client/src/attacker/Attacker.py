@@ -32,20 +32,24 @@ class Attacker:
     def start(self) -> None:
         """Start monitoring the directory for new exploits and launching threads for each exploit."""
         # Schedule a recurring event to launch the exploits every minute
+        logger.debug("An attacker instance is running.")
         self.timer = threading.Timer(5.0, self.launch_exploits)
         self.timer.start()
 
     def stop(self) -> None:
-        """Stop the CTFManager and cancel the recurring event."""
+        """Stop the attacker and cancel the recurring event."""
+        logger.debug("An attacker instance stopped.")
         #self.watcher.observer.stop()
         self.timer.cancel()
 
     def launch_exploits(self) -> None:
         """Launch a thread for each exploit in the `ExploitStore` against every team IP in the `TeamStore`."""
-        logger.debug("Launching exploits against all IPs")
         exploits = self.exploit_store.get_exploits()
+        if (len(exploits) == 0):
+            return
         teams = self.team_store.get_teams()
-    
+        logger.debug("Launching exploits against all IPs")
+
         for exploit in exploits:
             for team in teams.values():
                 thread = threading.Thread(target=self.run_exploit, args=(exploit, team.ip))
