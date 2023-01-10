@@ -2,6 +2,8 @@ import threading
 from typing import Dict
 
 from common import Team
+from config import Config
+from loguru import logger
 
 
 class TeamStore:
@@ -13,10 +15,14 @@ class TeamStore:
         lock (threading.RLock): A reentrant lock for synchronizing access to the store.
     """
 
-    def __init__(self):
+    def __init__(self, config: Config = None):
         """Initialize an empty TeamStore."""
         self.teams = {}
         self.lock = threading.RLock()
+        if config:
+            for team in config.get_teams():
+                self.add_team(team)
+    
 
     def add_team(self, team: Team) -> None:
         """
@@ -27,6 +33,7 @@ class TeamStore:
         """
         with self.lock:
             self.teams[team.name] = team
+        logger.debug("Added team " + team.country)
 
     def remove_team(self, name: str) -> Team:
         """

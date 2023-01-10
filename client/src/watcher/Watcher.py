@@ -29,14 +29,22 @@ class Watcher:
         """
         self.directory = directory
         self.exploit_store = exploit_store
-        self.observer = Observer()
+        self.observer = None
         self.attacker = attacker
         self.event_handler = EventHandler(self.exploit_store, self.attacker)
 
-    def run(self) -> None:
+    def start(self) -> None:
         """Start monitoring the directory for new files."""
+        logger.debug("The watcher has started.")
+        self.observer = Observer()
         self.observer.schedule(self.event_handler, self.directory, recursive=True)
         self.observer.start()
+    
+    def stop(self) -> None:
+        """Stop monitoring the directory for new files"""
+        logger.debug("The watcher has stopped.")
+        self.observer.stop()
+        self.observer.join()
 
 class EventHandler(FileSystemEventHandler):
     """

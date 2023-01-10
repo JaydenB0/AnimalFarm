@@ -24,7 +24,7 @@ class Submitter:
 
   def start(self) -> None:
     """Schedule a recurring event to post the flags to the web server every 10 seconds."""
-    self.timer = threading.Time(10.0, self.post_flags)
+    self.timer = threading.Timer(10.0, self.post_flag)
     self.timer.start()
 
   def stop(self) -> None:
